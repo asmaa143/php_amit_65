@@ -1,4 +1,7 @@
 <?php
+session_start();
+print_r($_SESSION);
+
 // phpinfo();
 $name="abc";
 $age=20;

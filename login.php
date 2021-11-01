@@ -1,5 +1,9 @@
 <?php
-
+  session_start();
+  if(isset($_SESSION["isLogged"]) && $_SESSION["isLogged"]){
+      header("Location:index.php");
+      return;
+  }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $errors = [];
@@ -25,12 +29,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     if(count($errors) <=0){
+
+      
         $username=$_POST["username"];
         $password=$_POST["password"];  
-          print_r($username);
-          echo "<br>";
-          print_r($password);
-          echo "<br>";
+
+        $_SESSION["username"]=$username;
+        $_SESSION["isLogged"]=true;
+          
+        header("Location:index.php");
+        return;
+
+        //   print_r($username);
+        //   echo "<br>";
+        //   print_r($password);
+        //   echo "<br>";
+    }else{
+        $_SESSION['errors']=$errors;
+        header("Location:login.php");
+        return;
     }
 
 
@@ -71,15 +88,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="card-body">
                         <h2 class="text-center">Login</h2>
                         <hr>
-                        <?php if(isset($errors) && count($errors) >0) {?>
+                        <?php if(isset($_SESSION['errors']) && count($_SESSION['errors']) >0) {?>
 
                          <div class="alert alert-danger">
                                <ul class="my-0 list-unstyled">
-                                   <?php foreach($errors as $val) {?>
+                                   <?php foreach($_SESSION['errors'] as $val) {?>
                                         <li> <?php echo $val ?>  </li>
                                     <?php }?>
                                </ul>
                            </div>
+                           <?php unset($_SESSION['errors']); ?>
                             <?php }?>
                         <form action="" method="POST">
                             <div class="row mb-3">
