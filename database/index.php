@@ -43,7 +43,7 @@ $allRecords = $stm->fetchAll(PDO::FETCH_ASSOC);
                         <h2 class="text-center">Countries</h2>
                         <hr>
                         <?php include_once("success.php") ?>
-                        <table class="table table-bordered table-striped">
+                        <table id="countriesBody" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -69,7 +69,7 @@ $allRecords = $stm->fetchAll(PDO::FETCH_ASSOC);
                                 <?php } ?>
                             </tbody>
                         </table>
-                        <div class="text-center mt-1">
+                        <div class="text-center mt-1" id="loadMoreContainer">
                             <button id="loadMoreBtn" class="btn btn-success">
                                 Load More
                                 <i id="loadMoreSpinner" class="fas fa-spinner fa-spin d-none"></i>
@@ -88,7 +88,14 @@ $allRecords = $stm->fetchAll(PDO::FETCH_ASSOC);
     <script src="../js/jquery.js"></script>
     <script>
         function generateCountryRow(n,record){
-            var html='';
+            var html=`<tr>
+             <td>${n}</td>
+             <td>${record['Name']}</td>
+             <td>${record['Continent']}</td>
+             <td>${record['Region']}</td>
+             <td>${record['SurfaceArea']}</td>
+             <td><a href="cities.php?q=${record['Code']}">View Cities</a></td>
+            </tr>`;
             return html;
         }
         $(document).ready(function() {
@@ -105,9 +112,14 @@ $allRecords = $stm->fetchAll(PDO::FETCH_ASSOC);
                     success: function(result) {
                         var countries = JSON.parse(result);
                         if (countries) {
-
+                           for(var i=0; i < countries.length ; i++){
+                               var countryHtml=generateCountryRow(counter+i+1,countries[i]);
+                               $('#countriesBody').append(countryHtml);
+                           }
                         }
-
+                        if(countries.length < 20){
+                            $("#loadMoreContainer").html(`<p class="text-center">No More Data</p>`)
+                        }
 
                         counter += 20;
 
